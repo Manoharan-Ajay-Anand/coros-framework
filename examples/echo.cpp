@@ -20,12 +20,13 @@ class EchoApplication : public coros::base::ServerApplication {
 
         coros::base::AwaitableValue<std::string> get_input(coros::base::Socket* socket) {
             std::string input;
-            char c = static_cast<char>(co_await socket->read_b());
+            char c;
+            co_await socket->read(reinterpret_cast<std::byte*>(&c), 1, true);
             while (c != '\n') {
                 if (c != '\r') {
                     input.push_back(c);
                 }
-                c = static_cast<char>(co_await socket->read_b());
+                co_await socket->read(reinterpret_cast<std::byte*>(&c), 1, true);
             }
             co_return std::move(input);
         }

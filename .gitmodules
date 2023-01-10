@@ -1,6 +1,6 @@
 [submodule "libraries/coros"]
 	path = libraries/coros
-	url = https://github.com/Manoharan-Ajay-Anand/coros.git
+	url = ../coros.git
 [submodule "libraries/coros-fcgi"]
 	path = libraries/coros-fcgi
-	url = https://github.com/Manoharan-Ajay-Anand/coros-fcgi.git
+	url = ../coros-fcgi.git

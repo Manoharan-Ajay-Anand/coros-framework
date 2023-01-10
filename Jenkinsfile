@@ -3,11 +3,12 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'git submodule update --init --recursive'
-        sh 'mkdir build'
-        sh 'cd build'
-        sh 'cmake ..'
-        sh 'make echo'
+        sh '''
+           mkdir build
+           cd build
+           cmake ..
+           make echo
+           '''
       }
     }
   }

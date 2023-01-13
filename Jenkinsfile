@@ -7,7 +7,7 @@ pipeline {
            mkdir build
            cd build
            cmake ..
-           make echo
+           make all
            '''
       }
     }

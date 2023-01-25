@@ -16,7 +16,6 @@ class HelloHandler : public coros::fcgi::FcgiHandler {
             co_await response.println("content-length: 18");
             co_await response.println("content-type: text/html\r\n");
             co_await response.print("welcome to fastcgi");
-            co_await response.flush();
         }
 };
 

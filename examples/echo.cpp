@@ -1,7 +1,7 @@
 #include "coros/network/server.h"
 #include "coros/app.h"
 #include "coros/network/socket.h"
-#include "coros/event/monitor.h"
+#include "coros/io/monitor.h"
 #include "coros/async/thread_pool.h"
 #include "coros/async/future.h"
 
@@ -63,7 +63,7 @@ class EchoApplication : public coros::base::ServerApplication {
 
 void start_server(coros::base::Server& server) {
     try {
-        server.start(true);
+        server.start();
         std::getchar();
         server.shutdown();
     } catch (std::runtime_error error) {
@@ -73,9 +73,9 @@ void start_server(coros::base::Server& server) {
 
 int main() {
     coros::base::ThreadPool thread_pool;
-    coros::base::SocketEventMonitor event_monitor;
+    coros::base::IoEventMonitor io_monitor(thread_pool);
     EchoApplication echo_app;
-    coros::base::Server echo_server(1025, echo_app, event_monitor, thread_pool);
+    coros::base::Server echo_server(1025, echo_app, io_monitor, thread_pool);
     std::cout << "Starting Server..." << std::endl;
     start_server(echo_server);
     return 0;

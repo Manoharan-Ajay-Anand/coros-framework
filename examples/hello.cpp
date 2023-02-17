@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "coros/async/thread_pool.h"
-#include "coros/event/monitor.h"
+#include "coros/io/monitor.h"
 #include "coros/network/server.h"
 
 #include "coros_fcgi/app.h"
@@ -21,7 +21,7 @@ class HelloHandler : public coros::fcgi::FcgiHandler {
 
 void start_server(coros::base::Server& server) {
     try {
-        server.start(true);
+        server.start();
         std::getchar();
         server.shutdown();
     } catch (std::runtime_error error) {
@@ -31,10 +31,10 @@ void start_server(coros::base::Server& server) {
 
 int main() {
     coros::base::ThreadPool thread_pool;
-    coros::base::SocketEventMonitor event_monitor;
+    coros::base::IoEventMonitor io_monitor(thread_pool);
     HelloHandler handler;
     coros::fcgi::FcgiApplication fcgi_app(thread_pool, handler);
-    coros::base::Server hello_server(9000, fcgi_app, event_monitor, thread_pool);
+    coros::base::Server hello_server(9000, fcgi_app, io_monitor, thread_pool);
     std::cout << "Starting FCGI Server..." << std::endl;
     start_server(hello_server);
     return 0;

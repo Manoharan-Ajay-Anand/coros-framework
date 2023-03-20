@@ -6,13 +6,17 @@
 
 #include "coros_fcgi/app.h"
 #include "coros_fcgi/handler.h"
-#include "coros_fcgi/channel/channel.h"
-#include "coros_fcgi/channel/response.h"
+#include "coros_fcgi/application/request.h"
+#include "coros_fcgi/application/response.h"
 
 class HelloHandler : public coros::fcgi::FcgiHandler {
     public:
-        coros::base::AwaitableFuture process_request(coros::fcgi::Channel& channel) {
-            coros::fcgi::Response& response = channel.response;
+        coros::base::AwaitableFuture process_request(coros::fcgi::Request& request,
+                                                     coros::fcgi::Response& response) {
+            for (auto& kv : request.variables) {
+                std::cout << kv.first << ": " << kv.second << std::endl;
+            }
+            std::cout << "-------------------" << std::endl;
             co_await response.println("content-length: 18");
             co_await response.println("content-type: text/html\r\n");
             co_await response.print("welcome to fastcgi");

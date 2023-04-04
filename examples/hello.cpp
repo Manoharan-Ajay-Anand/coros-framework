@@ -8,18 +8,15 @@
 #include "coros_fcgi/handler.h"
 #include "coros_fcgi/application/request.h"
 #include "coros_fcgi/application/response.h"
+#include "coros_fcgi/application/endpoint.h"
 
-class HelloHandler : public coros::fcgi::FcgiHandler {
+class HelloEndpoint : public coros::fcgi::FcgiEndpoint {
     public:
-        coros::base::AwaitableFuture process_request(coros::fcgi::Request& request,
-                                                     coros::fcgi::Response& response) {
-            for (auto& kv : request.variables) {
-                std::cout << kv.first << ": " << kv.second << std::endl;
-            }
-            std::cout << "-------------------" << std::endl;
-            co_await response.println("content-length: 18");
+        coros::base::AwaitableFuture on_request(coros::fcgi::Request& request,
+                                                coros::fcgi::Response& response) {
+            co_await response.println("content-length: 22");
             co_await response.println("content-type: text/html\r\n");
-            co_await response.print("welcome to fastcgi");
+            co_await response.print("this is hello endpoint");
         }
 };
 
@@ -36,7 +33,9 @@ void start_server(coros::base::Server& server) {
 int main() {
     coros::base::ThreadPool thread_pool;
     coros::base::IoEventMonitor io_monitor(thread_pool);
-    HelloHandler handler;
+    HelloEndpoint endpoint;
+    coros::fcgi::FcgiHandler handler;
+    handler.add_endpoint("/api/hello", endpoint);
     coros::fcgi::FcgiApplication fcgi_app(thread_pool, handler);
     coros::base::Server hello_server(9000, fcgi_app, io_monitor, thread_pool);
     std::cout << "Starting FCGI Server..." << std::endl;
